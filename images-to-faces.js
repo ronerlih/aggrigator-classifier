@@ -1,24 +1,19 @@
-const cv = require('opencv4nodejs');
-const fs = require('fs');
-const request = require('request');
-const download = require('image-downloader')
-const http = require('http'),      
+const cv = require('opencv4nodejs'),
+fs = require('fs'),
+request = require('request'),
+download = require('image-downloader'),
+http = require('http'),      
 https = require('https'),  
 axios = require('axios'),
-    Stream = require('stream').Transform;                                
+Stream = require('stream').Transform;                                
 
 //get input images urls
 var inputs = JSON.parse(fs.readFileSync('input-urls.json', 'utf8'));
 let imageName;
-//download 
-//var download = function(uri, filename, callback){
-//  request.head(uri, function(err, res, body){
-//    console.log('content-type:', res.headers['content-type']);
-//    console.log('content-length:', res.headers['content-length']);
-//
-//    request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
-//  });
-//}
+
+//face detection callifier
+const classifier = new cv.CascadeClassifier(cv.HAAR_FRONTALFACE_ALT2);
+
 
 //save jewish inputs
 inputs.jewishImages.forEach((url)=>{
@@ -36,9 +31,27 @@ axios({
   response.data.pipe(fs.createWriteStream(imageName)).on('close', function(){
   console.log("close");
   
-  const mat = cv.imread('./' + imageName);
-  cv.imshow('mat', mat);
-  cv.waitKey();
+  //read img to opencv cv mat
+//  const mat = cv.imread('./' + );
+  
+  //face detection
+
+	// via Promise
+	cv.imreadAsync('./' +imageName)
+	  .then(mat =>
+		 mat.bgrToGrayAsync()
+			.then(grayImg => classifier.detectMultiScaleAsync(grayImg))
+			.then((res) => {
+			  const { objects, numDetections } = res;
+				
+				console.log("res: " + JSON.stringify(res,null,2));
+				})
+	  )
+	  .catch(err => console.error(err));
+
+	
+//  cv.imshow('mat', mat);
+//  cv.waitKey();
 
 });
 
@@ -52,3 +65,40 @@ axios({
 //
 //cv.imshow('img', blueMat);
 //cv.waitKey();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
