@@ -13,12 +13,11 @@ let imageName;
 
 //face detection callifier
 const classifier = new cv.CascadeClassifier(cv.HAAR_FRONTALFACE_ALT2);
-
+let faceCount = 0;
 
 //save jewish inputs
 inputs.jewishImages.forEach((url)=>{
-
-imageName = 'downloaded_jewish/' + url.slice(url.length-8);
+console.log("url: " + url);
 
 // GET request for remote image
 axios({
@@ -27,14 +26,17 @@ axios({
   responseType:'stream'
 })
   .then(function(response) {
-  
+
+  imageName = 'downloaded_jewish/' + url.slice(url.length-8);
   response.data.pipe(fs.createWriteStream(imageName)).on('close', function(){
-  console.log("close");
+  console.log(imageName + " downloaded.");
   
   //read img to opencv cv mat
 //  const mat = cv.imread('./' + );
   
   //face detection
+//  cv.imshow('mat', mat);
+//  cv.waitKey();
 
 	// via Promise
 	cv.imreadAsync('./' +imageName)
@@ -43,17 +45,29 @@ axios({
 			.then(grayImg => classifier.detectMultiScaleAsync(grayImg))
 			.then((res) => {
 			  const { objects, numDetections } = res;
+				//each face
 				
-				console.log("res: " + JSON.stringify(res,null,2));
+				res.objects.forEach( face => {
+//				console.log("face: " + JSON.stringify(face,null,2));
+					
+					faceMat = mat.getRegion(new cv.Rect(face.x, face.y, face.width, face.height));
+					faceMat = faceMat.resize(64,64);
+					faceMat.bgrToGrayAsync()
+						.then(gray => { 
+							cv.imwrite('./downloaded_jewish/faces/' + faceCount + '.jpg', gray);
+							faceCount++;}
+							)
+			
+					
+				});
 				})
 	  )
 	  .catch(err => console.error(err));
 
 	
-//  cv.imshow('mat', mat);
-//  cv.waitKey();
 
-});
+
+  		});
 
 	imageName =  imageName;
   
