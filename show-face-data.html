@@ -1,0 +1,22 @@
+<html>
+<body>
+<div id="faces"></div>
+<script>
+
+(() => {
+ 
+for(i=0; i<20; i++){
+	var img = new Image();
+	img.src = "downloaded_jewish/faces/" + i + '.jpg';
+	
+	img.addEventListener("load", function(){
+  		document.getElementById("faces").appendChild(this);
+ 	});
+}
+
+ 
+})();
+
+</script>
+</body>
+</html>
