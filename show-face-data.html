@@ -1,19 +1,33 @@
 <html>
 <body>
-<div id="faces"></div>
-<script>
+jewish database
+<div id="jewish-faces"></div>
+<br><br><br><br>
+non jewish database
 
+<div id="gentile-faces"></div>
+<script>
 (() => {
- 
-for(i=0; i<20; i++){
+
+
+//jewish faces
+for(i=0; i<38; i++){
 	var img = new Image();
 	img.src = "downloaded_jewish/faces/" + i + '.jpg';
 	
 	img.addEventListener("load", function(){
-  		document.getElementById("faces").appendChild(this);
+  		document.getElementById("jewish-faces").appendChild(this);
  	});
 }
-
+//gentile faces
+for(i=38; i<55; i++){
+	var img = new Image();
+	img.src = "downloaded_gentile/faces/" + i + '.jpg';
+	
+	img.addEventListener("load", function(){
+  		document.getElementById("gentile-faces").appendChild(this);
+ 	});
+}
  
 })();
 

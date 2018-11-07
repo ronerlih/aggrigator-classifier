@@ -16,137 +16,145 @@ const classifier = new cv.CascadeClassifier(cv.HAAR_FRONTALFACE_ALT2);
 let faceCount = 0;
 
 //save jewish inputs
-inputs.jewishImages.forEach((url)=>{
-console.log("url: " + url);
+let jewishImagesLength = inputs.jewishImages.length;
+let jewishImagesIndex = 0;
+let gentileImagesLength = inputs.gentileImages.length;
+let gentileImagesIndex = 0;
+									
+url = inputs.jewishImages[0];
+imagesToFaces(url);
 
-// GET request for remote image
-axios({
-  method:'get',
-  url:url,
-  responseType:'stream'
-})
-  .then(function(response) {
-
-  imageName = 'downloaded_jewish/' + url.slice(url.length-8);
-  response.data.pipe(fs.createWriteStream(imageName)).on('close', function(){
-  console.log(imageName + " downloaded.");
-  
-  //face detection
-//  cv.imshow('mat', mat);
-//  cv.waitKey();
-
-	// via Promise
-	cv.imreadAsync('./' +imageName)
-	  .then(mat =>
-		 mat.bgrToGrayAsync()
-			.then(grayImg => classifier.detectMultiScaleAsync(grayImg))
-			.then((res) => {
-			  const { objects, numDetections } = res;
-				//each face
-				
-				res.objects.forEach( face => {
-//				console.log("face: " + JSON.stringify(face,null,2));
-					
-					faceMat = mat.getRegion(new cv.Rect(face.x, face.y, face.width, face.height));
-					faceMat = faceMat.resize(64,64);
-					faceMat.bgrToGrayAsync()
-						.then(gray => { 
-							cv.imwrite('./downloaded_jewish/faces/' + faceCount + '.jpg', gray);
-							faceCount++;}
-							)
-			
-					
-				});
-				})
-	  )
-	  .catch(err => console.error(err));
-
+function imagesToFaces(src){
+	console.log("url: " + src);
 	
+	// GET request for remote image
+	axios({
+	  method:'get',
+	  url:src,
+	  responseType:'stream'
+	})
+	  .then(function(response) {
+
+	  imageName = 'downloaded_jewish/' + src.slice(src.length-8);
+	  response.data.pipe(fs.createWriteStream(imageName)).on('close', function(){
+	  console.log(imageName + " downloaded.");
+
+	  //face detection
+	//  cv.imshow('mat', mat);
+	//  cv.waitKey();
+
+		// via Promise
+		cv.imreadAsync('./' +imageName)
+		  .then(mat =>
+			 mat.bgrToGrayAsync()
+				.then(grayImg => classifier.detectMultiScaleAsync(grayImg))
+				.then((res) => {
+				  const { objects, numDetections } = res;
+					//each face
+					let imageFaces = 0;
+					console.log("faces length: " + res.objects.length);
+					if(res.objects.length == 0){jewishImagesIndex++}
+					res.objects.forEach( face => {
+	//				console.log("face: " + JSON.stringify(face,null,2));
+
+						faceMat = mat.getRegion(new cv.Rect(face.x, face.y, face.width, face.height));
+						faceMat = faceMat.resize(150,150);
+						faceMat.bgrToGrayAsync()
+							.then(gray => { 
+								cv.imwrite('./downloaded_jewish/faces/' + faceCount + '.jpg', gray);
+								faceCount++;
+								imageFaces++;
+								console.log("imageFaces: " + imageFaces + ", numDetections -1: " + (numDetections.length ));
+								if(imageFaces == numDetections.length){
+								jewishImagesIndex++;
+								console.log("\nimage faces complete");
+								console.log("jewishImagesIndex: " + jewishImagesIndex + ', jewishImagesLength : ' + (jewishImagesLength ));
+									if(jewishImagesIndex == jewishImagesLength){
+									console.log("\n1st batch completed");
+									
+									//////save gentile inputs
+									
+									url = inputs.gentileImages[0];
+									imagesToGentileFaces(url);
+									
+
+									}else{
+										imageFaces = 0;
+										url = inputs.jewishImages[jewishImagesIndex];
+										console.log("calling: " + url);
+										imagesToFaces(url);
+									}
+								}
+							})
 
 
-  		});
+					});
+					})
+		  )
+		  .catch(err => console.error(err));
+			});
+	});
+}
 
-	imageName =  imageName;
-  
-});
 
-});
 
-//save gentile inputs
-inputs.gentileImages.forEach((url)=>{
-console.log("url: " + url);
-
-// GET request for remote image
-axios({
-  method:'get',
-  url:url,
-  responseType:'stream'
-})
-  .then(function(response) {
-
-  imageName = 'downloaded_gentile/' + url.slice(url.length-8);
-  response.data.pipe(fs.createWriteStream(imageName)).on('close', function(){
-  console.log(imageName + " downloaded.");
-  
-  //face detection
-//  cv.imshow('mat', mat);
-//  cv.waitKey();
-
-	// via Promise
-	cv.imreadAsync('./' +imageName)
-	  .then(mat =>
-		 mat.bgrToGrayAsync()
-			.then(grayImg => classifier.detectMultiScaleAsync(grayImg))
-			.then((res) => {
-			  const { objects, numDetections } = res;
-				//each face
-				
-				res.objects.forEach( face => {
-//				console.log("face: " + JSON.stringify(face,null,2));
-					
-					faceMat = mat.getRegion(new cv.Rect(face.x, face.y, face.width, face.height));
-					faceMat = faceMat.resize(64,64);
-					faceMat.bgrToGrayAsync()
-						.then(gray => { 
-							cv.imwrite('./downloaded_gentile/faces/' + faceCount + '.jpg', gray);
-							faceCount++;}
-							)
-			
-					
-				});
-				})
-	  )
-	  .catch(err => console.error(err));
-
+function imagesToGentileFaces(src){
+	console.log("url: " + src);
 	
+	// GET request for remote image
+	axios({
+	  method:'get',
+	  url:src,
+	  responseType:'stream'
+	})
+	  .then(function(response) {
+
+	  imageName = 'downloaded_gentile/' + src.slice(src.length-8);
+	  response.data.pipe(fs.createWriteStream(imageName)).on('close', function(){
+	  console.log(imageName + " downloaded.");
+
+	  //face detection
+
+		cv.imreadAsync('./' +imageName)
+		  .then(mat =>
+			 mat.bgrToGrayAsync()
+				.then(grayImg => classifier.detectMultiScaleAsync(grayImg))
+				.then((res) => {
+				  const { objects, numDetections } = res;
+					//each face
+					let imageFaces = 0;
+					res.objects.forEach( face => {
+	//				console.log("face: " + JSON.stringify(face,null,2));
+
+						faceMat = mat.getRegion(new cv.Rect(face.x, face.y, face.width, face.height));
+						faceMat = faceMat.resize(150,150);
+						faceMat.bgrToGrayAsync()
+							.then(gray => { 
+								cv.imwrite('./downloaded_gentile/faces/' + faceCount + '.jpg', gray);
+								faceCount++;
+								imageFaces++;
+//								console.log("imageFaces: " + imageFaces + ", numDetections -1: " + numDetections -1);
+								if(imageFaces == numDetections.length ){
+								gentileImagesIndex++;
+								console.log("image faces complete");
+									if(gentileImagesIndex == gentileImagesLength ){
+									console.log("\n2st batch completed");
+									}else{
+										url = inputs.gentileImages[gentileImagesIndex];
+										console.log("call url: " + url);
+										imagesToGentileFaces(url);
+									}
+								}
+							})
 
 
-  		});
-
-	imageName =  imageName;
-  
-});
-
-});
-//
-//cv.imshow('img', blueMat);
-//cv.waitKey();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+					});
+					})
+		  )
+		  .catch(err => console.error(err));
+			});
+	});
+}
 
 
 
