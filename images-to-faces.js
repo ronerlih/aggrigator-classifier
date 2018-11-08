@@ -1,3 +1,5 @@
+//import KerasJS from 'keras-js'
+
 const cv = require('opencv4nodejs'),
 fs = require('fs'),
 request = require('request'),
@@ -56,19 +58,35 @@ function imagesToFaces(src){
 					if(res.objects.length == 0){jewishImagesIndex++}
 					res.objects.forEach( face => {
 	//				console.log("face: " + JSON.stringify(face,null,2));
-
-						faceMat = mat.getRegion(new cv.Rect(face.x, face.y, face.width, face.height));
+						rect = new cv.Rect(face.x, face.y, face.width, face.height);
+						faceMat = mat.getRegion(rect);
+						
+						//draw on origin
+						mat.drawRectangle ( rect , new cv.Vec(100, 255, 0) ,1 , 8 , 0 );
+						
+						
 						faceMat = faceMat.resize(150,150);
 						faceMat.bgrToGrayAsync()
 							.then(gray => { 
 								cv.imwrite('./downloaded_jewish/faces/' + faceCount + '.jpg', gray);
 								faceCount++;
 								imageFaces++;
+								
+								//draw on origin img
+								if(faceCount != 14){
+								mat.putText ( faceCount.toString()  , new cv.Point(face.x, face.y) , 0 , 0.7 ,  new cv.Vec(100, 255, 0) ,1 ,  1 , 0 );
+								}
+								
 								console.log("imageFaces: " + imageFaces + ", numDetections -1: " + (numDetections.length ));
+								
 								if(imageFaces == numDetections.length){
 								jewishImagesIndex++;
 								console.log("\nimage faces complete");
 								console.log("jewishImagesIndex: " + jewishImagesIndex + ', jewishImagesLength : ' + (jewishImagesLength ));
+								
+								//write image faces
+								cv.imwrite('./' + imageName , mat);
+										
 									if(jewishImagesIndex == jewishImagesLength){
 									console.log("\n1st batch completed");
 									
@@ -79,6 +97,7 @@ function imagesToFaces(src){
 									
 
 									}else{
+										
 										imageFaces = 0;
 										url = inputs.jewishImages[jewishImagesIndex];
 										console.log("calling: " + url);
@@ -126,19 +145,39 @@ function imagesToGentileFaces(src){
 					res.objects.forEach( face => {
 	//				console.log("face: " + JSON.stringify(face,null,2));
 
-						faceMat = mat.getRegion(new cv.Rect(face.x, face.y, face.width, face.height));
+						rect = new cv.Rect(face.x, face.y, face.width, face.height);
+						faceMat = mat.getRegion(rect);
+						
+						//draw on origin
+						mat.drawRectangle ( rect , new cv.Vec(255, 100, 0) ,1 , 8 , 0 );
+
 						faceMat = faceMat.resize(150,150);
 						faceMat.bgrToGrayAsync()
 							.then(gray => { 
 								cv.imwrite('./downloaded_gentile/faces/' + faceCount + '.jpg', gray);
 								faceCount++;
 								imageFaces++;
+								
+								//draw on origin img
+								if(faceCount != 14){
+								mat.putText ( faceCount.toString()  , new cv.Point(face.x, face.y) , 0 , 0.7 ,  new cv.Vec(255, 100, 0) ,1 ,  1 , 0 );
+								}
+								
 //								console.log("imageFaces: " + imageFaces + ", numDetections -1: " + numDetections -1);
 								if(imageFaces == numDetections.length ){
 								gentileImagesIndex++;
+								
+								//write image faces
+								cv.imwrite('./' + imageName , mat);
+								
+								
 								console.log("image faces complete");
 									if(gentileImagesIndex == gentileImagesLength ){
-									console.log("\n2st batch completed");
+									
+										//write image faces
+										cv.imwrite('./' + imageName , mat);
+										console.log("\n2st batch completed");
+									
 									}else{
 										url = inputs.gentileImages[gentileImagesIndex];
 										console.log("call url: " + url);

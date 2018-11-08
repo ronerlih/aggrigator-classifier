@@ -7,6 +7,7 @@
     "axios": "^0.18.0",
     "electron": "^3.0.7",
     "image-downloader": "^3.4.1",
+    "keras-js": "^1.0.3",
     "opencv4nodejs": "^4.10.0"
   },
   "scripts": {
