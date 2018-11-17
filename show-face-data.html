@@ -1,29 +1,66 @@
 <html>
+<head>
+<style>
+.faces{max-width:608px; width:90vw; margin:2.5vw;}
+.content{max-width:608px; width:90vw;}
+</style>
+</head>
 <body>
-jewish database
-<div id="jewish-faces"></div>
-<br><br><br><br>
-non jewish database
 
-<div id="gentile-faces"></div>
+<div class="faces">
+	non-Jewish source
+	<img class="content" src="downloaded_gentile/18_0.jpg">
+</div>
+
+<div class="faces">
+	Jewish source
+	<img class="content" src="downloaded_jewish/2371.jpg">
+</div>
+
+<div id="jewish-faces" class="faces">jewish database batch sample<br><br></div>
+
+
+<div id="gentile-faces" class="faces">non jewish database batch sample<br><br></div>
 <script>
 (() => {
 
 
 //jewish faces
-for(i=0; i<38; i++){
+for(i=0; i<230; i++){
 	var img = new Image();
-	img.src = "downloaded_jewish/faces/" + i + '.jpg';
 	
+	let zeros = '0';
+	if(i < 10){
+	zeros = '000';
+	}else if(i < 100){
+	zeros = '00';
+	}else if(i < 1000){
+	zeros = '0';
+	}else{
+	zeros = '';
+	}
+	
+	img.src = "downloaded_jewish/faces/" + zeros + i + '.jpg';
+	img.style = "width:32px";
 	img.addEventListener("load", function(){
   		document.getElementById("jewish-faces").appendChild(this);
  	});
 }
 //gentile faces
-for(i=38; i<55; i++){
+for(i=0; i<302; i++){
 	var img = new Image();
-	img.src = "downloaded_gentile/faces/" + i + '.jpg';
-	
+	let zeros = '0';
+	if(i < 10){
+	zeros = '000';
+	}else if(i < 100){
+	zeros = '00';
+	}else if(i < 1000){
+	zeros = '0';
+	}else{
+	zeros = '';
+	}
+	img.src = "downloaded_gentile/faces/" + zeros + i + '.jpg';
+	img.style = "width:32px";
 	img.addEventListener("load", function(){
   		document.getElementById("gentile-faces").appendChild(this);
  	});

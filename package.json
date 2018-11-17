@@ -4,6 +4,7 @@
   "description": "",
   "main": "images-to-faces.js",
   "dependencies": {
+    "@tensorflow/tfjs": "^0.13.4",
     "axios": "^0.18.0",
     "electron": "^3.0.7",
     "image-downloader": "^3.4.1",

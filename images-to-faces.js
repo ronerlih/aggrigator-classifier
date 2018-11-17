@@ -68,7 +68,18 @@ function imagesToFaces(src){
 						faceMat = faceMat.resize(150,150);
 						faceMat.bgrToGrayAsync()
 							.then(gray => { 
-								cv.imwrite('./downloaded_jewish/faces/' + faceCount + '.jpg', gray);
+								let zeros = '0';
+								if(faceCount < 10){
+								zeros = '000';
+								}else if(faceCount < 100){
+								zeros = '00';
+								}else if(faceCount < 1000){
+								zeros = '0';
+								}else{
+								zeros = '';
+								}
+								
+								cv.imwrite('./downloaded_jewish/faces/' + zeros + faceCount + '.jpg', gray);
 								faceCount++;
 								imageFaces++;
 								
@@ -91,7 +102,7 @@ function imagesToFaces(src){
 									console.log("\n1st batch completed");
 									
 									//////save gentile inputs
-									
+									faceCount = 0;
 									url = inputs.gentileImages[0];
 									imagesToGentileFaces(url);
 									
@@ -154,7 +165,19 @@ function imagesToGentileFaces(src){
 						faceMat = faceMat.resize(150,150);
 						faceMat.bgrToGrayAsync()
 							.then(gray => { 
-								cv.imwrite('./downloaded_gentile/faces/' + faceCount + '.jpg', gray);
+								
+								let zeros = '0';
+								if(faceCount < 10){
+								zeros = '000';
+								}else if(faceCount < 100){
+								zeros = '00';
+								}else if(faceCount < 1000){
+								zeros = '0';
+								}else{
+								zeros = '';
+								}
+								
+								cv.imwrite('./downloaded_gentile/faces/' + zeros + faceCount + '.jpg', gray);
 								faceCount++;
 								imageFaces++;
 								
@@ -188,16 +211,19 @@ function imagesToGentileFaces(src){
 
 
 					});
-					})
-		  )
-		  .catch(err => console.error(err));
+					}).catch(err => console.error(err))
+		  ).catch(err => console.error(err));
 			});
 	});
 }
 
 
+//	"https://calbaptist.edu/_resources/images/CBU-Tree-Campus-USA-2018.jpg",
 
-
+//	"http://catholicsindia.in/wp-content/uploads/2017/07/1.jpg",
+//	"https://corpusetsangre.files.wordpress.com/2013/10/18.jpg",
+//	"http://1.bp.blogspot.com/-RmRVbEb2VsE/TWHgmQx3jQI/AAAAAAAAA9k/vyR2LBv8yq0/s1600/l.jpg",
+//	"http://faithbcphc.org/images/wms/5.jpg",
 
 
 

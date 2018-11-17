@@ -1,0 +1,3 @@
+ron$ cd /Users/ron/Development/computer-vision-machine-learning/faces-aggrigator
+ron$ node dnnTensorflowInception
+ron$ node webcamFaceDetectionGpu
